@@ -1,0 +1,1 @@
+update the react ui code for votingdetailed file
