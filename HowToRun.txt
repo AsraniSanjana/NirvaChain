@@ -15,7 +15,7 @@ Reference documentation: https://www.web3.university/article/how-to-deploy-a-sma
 once u have the addr where the contract is deployed at, u can do its ui which is standalone.
 _____________________________________________________________________________________________
 
-step2 to make ui for the deployed sc
+step2: to make ui for the deployed sc
 
 now after running everything and getting a contract address where the code is running, run:
 npm install 
