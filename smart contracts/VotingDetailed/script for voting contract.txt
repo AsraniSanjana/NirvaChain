@@ -1,0 +1,358 @@
+// import Web3 from 'web3';
+
+
+// Replace with your Alchemy URL and API key
+// const alchemyUrl = 'https://eth-mainnet.g.alchemy.com/v2/Beh71XlEt0Rgiq28V_FwhlmZnnZs9Bfp';
+// const { Web3 } = require('web3'); // Note the use of curly braces
+
+// const web3 = new Web3(alchemyUrl);
+async function main(){
+
+const { Sepolia } = require('sepolia');
+const Web3 = require('web3');
+
+// Create a Sepolia instance
+const sepolia = new Sepolia();
+
+// Set up Web3 with Sepolia's provider
+const web3 = new Web3(sepolia.provider);
+
+
+// Replace with the actual address of the deployed Voting contract
+const contractAddress = '0x1c8Bb137847E94AE8014E98150946dbB648949e7';
+
+// Replace with your Ethereum account's private key (for sending transactions)
+const privateKey = 'a64b8e2fecc914b49e59722d56c03394680f359e4492f3aab5162f0d965665c4';  //(koyacrab)
+
+// Create an instance of the Voting contract
+const contract = new web3.eth.Contract(
+    [
+        // Add the ABI of your Voting contract here
+        // You can obtain the ABI by compiling your Solidity contract
+        [
+          {
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "_candidate",
+                "type": "address"
+              }
+            ],
+            "name": "registerCandidates",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "result",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "enum Voting.votingStatus",
+                "name": "_newStatus",
+                "type": "uint8"
+              }
+            ],
+            "name": "setStatus",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "stateMutability": "nonpayable",
+            "type": "constructor"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "_candidate",
+                "type": "address"
+              }
+            ],
+            "name": "vote",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+              }
+            ],
+            "name": "candidatesList",
+            "outputs": [
+              {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "contractOwner",
+            "outputs": [
+              {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "getVotesForAllCandidates",
+            "outputs": [
+              {
+                "internalType": "string[]",
+                "name": "",
+                "type": "string[]"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+              }
+            ],
+            "name": "hasVoted",
+            "outputs": [
+              {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "identifyTieCandidates",
+            "outputs": [
+              {
+                "internalType": "string",
+                "name": "",
+                "type": "string"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "status",
+            "outputs": [
+              {
+                "internalType": "enum Voting.votingStatus",
+                "name": "",
+                "type": "uint8"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "_candidate",
+                "type": "address"
+              }
+            ],
+            "name": "validateCandidate",
+            "outputs": [
+              {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "_candidate",
+                "type": "address"
+              }
+            ],
+            "name": "votesCount",
+            "outputs": [
+              {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+              }
+            ],
+            "name": "votesReceived",
+            "outputs": [
+              {
+                "internalType": "uint8",
+                "name": "",
+                "type": "uint8"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "winner",
+            "outputs": [
+              {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "winnerVotes",
+            "outputs": [
+              {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          }
+        ]
+    ],
+    contractAddress
+);
+
+// Set the default account using your private key
+web3.eth.accounts.wallet.add(privateKey);
+
+// Example: Register a candidate
+async function registerCandidate(candidateAddress) {
+    try {
+        const tx = await contract.methods.registerCandidates(candidateAddress).send({
+            from: web3.eth.accounts.wallet[0].address,
+            gas: '500000' // Adjust the gas limit accordingly
+        });
+        console.log('Candidate registered:', tx.transactionHash);
+    } catch (error) {
+        console.error('Error registering candidate:', error);
+    }
+}
+
+// Example: Vote for a candidate
+async function voteForCandidate(candidateAddress) {
+    try {
+        const tx = await contract.methods.vote(candidateAddress).send({
+            from: web3.eth.accounts.wallet[0].address,
+            gas: '500000' // Adjust the gas limit accordingly
+        });
+        console.log('Vote submitted:', tx.transactionHash);
+    } catch (error) {
+        console.error('Error voting:', error);
+    }
+}
+
+// Example: Get the list of candidates and their vote counts
+async function getCandidatesWithVotes() {
+    try {
+        const candidateInfo = await contract.methods.getVotesForAllCandidates().call();
+        console.log('Candidates and their votes:');
+        candidateInfo.forEach((info) => {
+            console.log(info);
+        });
+    } catch (error) {
+        console.error('Error fetching candidate information:', error);
+    }
+}
+
+// Example: Get the winner of the election
+async function getWinner() {
+    try {
+        await contract.methods.result().call();
+        const winner = await contract.methods.winner().call();
+        const winnerVotes = await contract.methods.winnerVotes().call();
+        console.log('Winner:', winner, 'with', winnerVotes, 'votes');
+    } catch (error) {
+        console.error('Error getting winner:', error);
+    }
+}
+
+// Example: Set the voting status (OnlyOwner)
+async function setVotingStatus(newStatus) {
+    try {
+        const tx = await contract.methods.setStatus(newStatus).send({
+            from: web3.eth.accounts.wallet[0].address,
+            gas: '500000' // Adjust the gas limit accordingly
+        });
+        console.log('Voting status set to', newStatus, 'by owner:', tx.transactionHash);
+    } catch (error) {
+        console.error('Error setting voting status:', error);
+    }
+}
+
+// Example: Identify tie candidates
+async function findTieCandidates() {
+    try {
+        const tieCandidates = await contract.methods.identifyTieCandidates().call();
+        console.log('Tie candidates:', tieCandidates);
+    } catch (error) {
+        console.error('Error finding tie candidates:', error);
+    }
+}
+
+// Call the functions as needed
+// Example:
+// await registerCandidate('0x1234567890abcdef...'); // Replace with the candidate's Ethereum address
+// voteForCandidate('0x1234567890abcdef...'); // Replace with the candidate's Ethereum address
+// getCandidatesWithVotes();
+// getWinner();
+// setVotingStatus(2); // Change the voting status as needed (0 = NotStarted, 1 = Running, 2 = Completed)
+// findTieCandidates();
+
+  process.exit(0); // Exit the script
+}
+
+main().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});
+
+
+
+

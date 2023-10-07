@@ -1,0 +1,159 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+// msg sender= the account's address which is selected from below environment
+contract Voting {
+    address public contractOwner;
+    
+    address[] public candidatesList;
+    uint256 voteCount;
+    mapping(address => uint8) public votesReceived;
+    address public winner;
+    uint public winnerVotes;
+    enum votingStatus { NotStarted, Running, Completed }
+    votingStatus public status;
+
+     mapping(address => bool) public hasVoted;
+
+    constructor() {
+        contractOwner = msg.sender;
+    }
+
+    modifier OnlyOwner() {
+        if (msg.sender == contractOwner) {
+            _;
+        }
+    }
+
+function registerCandidates(address _candidate) public {
+    require(msg.sender == contractOwner, "You're not the contract owner");
+    candidatesList.push(_candidate);
+    if (msg.sender != contractOwner) {
+        revert("Unsuccessful registration");
+    }
+}
+
+    // candidateList takes input a number (uint256) the index of the candidate. and gives u the address of it
+
+
+function vote(address _candidate) public {
+    require(validateCandidate(_candidate), "You are voting for an unregistered candidate");
+    require(status == votingStatus.Running, "Election isn't active");
+    require(validateVoter(msg.sender), "You are not registered as a voter");
+    require(!hasVoted[msg.sender], "You have already voted");
+
+    votesReceived[_candidate] = votesReceived[_candidate] + 1;
+    hasVoted[msg.sender] = true;
+}
+
+function validateVoter(address _voter) view internal returns(bool) {
+    for (uint i = 0; i < candidatesList.length; i++) {
+        if (candidatesList[i] == _voter) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
+// u paste any ac's address and run this function, will give u the number of votes each account has recieved
+
+
+function validateCandidate(address _candidate) view public returns(bool){
+
+for(uint i=0; i<candidatesList.length; i++)
+{
+if (candidatesList[i]== _candidate){ return true;}
+}
+return false;
+}
+
+function votesCount(address _candidate) public view returns(uint){
+
+require(validateCandidate(_candidate), "not a valid/registered candidate");  
+
+assert(status==votingStatus.Running);
+// assert is same as require except theres no error msg string printing 
+return votesReceived[_candidate];  
+}
+
+function result() public{
+require(status==votingStatus.Completed,"Election still going on. Cant show results yet.");
+for (uint i=0; i<candidatesList.length;i++){
+if(votesReceived[candidatesList[i]]>winnerVotes){
+winnerVotes=votesReceived[candidatesList[i]];
+winner=candidatesList[i];
+}
+// click on the result btn first, get it confirmed. then u click on winner, winner votes.
+}
+}
+function setStatus(votingStatus _newStatus) public OnlyOwner {
+    require(_newStatus >= votingStatus.NotStarted && _newStatus <= votingStatus.Completed, "Invalid status input");
+    
+    status = _newStatus;
+}
+
+function getVotesForAllCandidates() public view returns (string[] memory) {
+    string[] memory voteInfo = new string[](candidatesList.length);
+
+    for (uint i = 0; i < candidatesList.length; i++) {
+        uint candidateVoteCount = votesReceived[candidatesList[i]];
+        string memory info = string(abi.encodePacked("Index: ", uintToString(i), ", Count: ", uintToString(candidateVoteCount)));
+        voteInfo[i] = info;
+    }
+
+    return voteInfo;
+}
+
+
+function uintToString(uint value) internal pure returns (string memory) {
+    if (value == 0) {
+        return "0";
+    }
+    uint temp = value;
+    uint digits;
+    while (temp != 0) {
+        digits++;
+        temp /= 10;
+    }
+    bytes memory buffer = new bytes(digits);
+    while (value != 0) {
+        digits -= 1;
+        buffer[digits] = bytes1(uint8(48 + uint(value % 10)));
+        value /= 10;
+    }
+    return string(buffer);
+}
+
+function addressToString(address _address) internal pure returns (string memory) {
+    bytes32 value = bytes32(uint256(uint160(_address)));
+    bytes memory alphabet = "0123456789abcdef";
+
+    bytes memory str = new bytes(42);
+    str[0] = '0';
+    str[1] = 'x';
+    for (uint i = 0; i < 20; i++) {
+        str[2 + i * 2] = alphabet[uint(uint8(value[i + 12] >> 4))];
+        str[3 + i * 2] = alphabet[uint(uint8(value[i + 12] & 0x0f))];
+    }
+    return string(str);
+}
+function identifyTieCandidates() public view returns (string memory) {
+    uint maxVotes = 0;
+    string memory tieCandidates = "It's a tie between: ";
+
+    for (uint i = 0; i < candidatesList.length; i++) {
+        address candidate = candidatesList[i];
+        //uint voteCount = votesReceived[candidate];
+        if (voteCount > maxVotes) {
+            maxVotes = voteCount;
+            tieCandidates = string(abi.encodePacked("It's a tie between: ", addressToString(candidate), " with ", uintToString(maxVotes), " votes"));
+        } else if (voteCount == maxVotes) {
+            tieCandidates = string(abi.encodePacked(tieCandidates, ", ", addressToString(candidate)));
+        }
+    }
+
+    return tieCandidates;
+}
+
+
+}
